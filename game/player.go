@@ -16,7 +16,7 @@ type Player struct {
 	y float64
 
 	speed    float64
-	fireRate float64
+	fireRate int64
 
 	health int
 
@@ -44,7 +44,7 @@ func (p *Player) Update() {
 
 	if mouseState == sdl.ButtonLMask {
 		currT := time.Now().UnixMilli()
-		if currT-lastFire > int64(p.fireRate) {
+		if currT-lastFire > p.fireRate {
 			lastFire = currT
 			dirToMouse := utils.Direction(p, &utils.Point{X: float64(mouseX), Y: float64(mouseY)})
 			p.game.createBullet(p.x, p.y, dirToMouse)
