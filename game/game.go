@@ -2,6 +2,7 @@ package game
 
 import (
 	"fmt"
+	"game/audio"
 	"game/collision"
 	"game/configuration"
 	"game/render"
@@ -154,4 +155,5 @@ func (g *Game) deleteBullet(bulletToDelete *Bullet) {
 
 func (g *Game) GameOver() {
 	g.IsGameOver = true
+	audio.AllAudios["game_over"].Play()
 }

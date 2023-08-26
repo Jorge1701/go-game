@@ -32,6 +32,15 @@ func Initialize() error {
 	if err := loadAudio("shot", "resources/shot.wav"); err != nil {
 		return err
 	}
+	if err := loadAudio("player_hit", "resources/player_hit.wav"); err != nil {
+		return err
+	}
+	if err := loadAudio("enemy_dead", "resources/enemy_dead.wav"); err != nil {
+		return err
+	}
+	if err := loadAudio("game_over", "resources/game_over.wav"); err != nil {
+		return err
+	}
 
 	return nil
 }

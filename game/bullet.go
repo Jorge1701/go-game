@@ -1,6 +1,7 @@
 package game
 
 import (
+	"game/audio"
 	"game/collision"
 	"game/render"
 	"math"
@@ -35,6 +36,7 @@ func NewBullet(game *Game, x, y, dir float64) *Bullet {
 func (b *Bullet) Update(enemies []*Enemy) {
 	for _, e := range enemies {
 		if collision.CheckCollision(b, e) {
+			audio.AllAudios["enemy_dead"].Play()
 			b.game.deleteEnemy(e)
 			b.game.deleteBullet(b)
 			return
