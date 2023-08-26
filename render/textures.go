@@ -30,7 +30,7 @@ func LoadAllTextures(renderer *Renderer) error {
 	AllTextures["enemy"] = enemyTexture
 
 	// Bullet texture
-	bulletTexture, err := NewTexture(renderer, "resources/bullet.bmp", 3, 3)
+	bulletTexture, err := NewTexture(renderer, "resources/bullet.bmp", 4, 4)
 	if err != nil {
 		return fmt.Errorf("Error loading enemy texture: %v", err)
 	}
