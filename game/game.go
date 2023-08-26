@@ -13,6 +13,7 @@ type Game struct {
 
 	player  *Player
 	enemies []*Enemy
+	bullets []*Bullet
 
 	stage         int
 	killedEnemies int
@@ -25,22 +26,18 @@ func NewGame(renderer *render.Renderer) (g *Game, err error) {
 	g = &Game{
 		renderer:      renderer,
 		enemies:       []*Enemy{},
+		bullets:       []*Bullet{},
 		stage:         1,
 		killedEnemies: 0,
 		maxEnemyCount: configuration.StartingEnemyCount,
 		IsGameOver:    false,
 	}
 
-	p, err := NewPlayer(
+	g.player = NewPlayer(
 		g,
 		configuration.Width/2,
 		configuration.Height/2,
-		render.AllTextures["player"],
 	)
-	if err != nil {
-		return &Game{}, fmt.Errorf("Error creating new player: %v", err)
-	}
-	g.player = p
 
 	return g, err
 }
@@ -52,15 +49,20 @@ func (g *Game) Update() {
 		e.Update()
 	}
 
+	for _, b := range g.bullets {
+		b.Update()
+	}
+
 	for len(g.enemies) < g.maxEnemyCount {
 		g.createEnemy()
 	}
 
-	fmt.Printf("stage %d - enemies %d - killed %d - next %d\n",
+	fmt.Printf("stage %d - enemies %d - killed %d - next %d - bullets %d\n",
 		g.stage,
 		len(g.enemies),
 		g.killedEnemies,
 		g.nextStage(),
+		len(g.bullets),
 	)
 }
 
@@ -70,6 +72,14 @@ func (g *Game) Render() {
 	for _, e := range g.enemies {
 		g.renderer.RenderDrawable(e)
 	}
+
+	for _, b := range g.bullets {
+		g.renderer.RenderDrawable(b)
+	}
+}
+
+func (g *Game) createBullet(x, y, dir float64) {
+	g.bullets = append(g.bullets, NewBullet(g, x, y, dir))
 }
 
 func (g *Game) createEnemy() {
@@ -92,7 +102,7 @@ func (g *Game) createEnemy() {
 		y = float64(rand.Intn(configuration.Height))
 	}
 
-	e, err := NewEnemy(g, x, y, render.AllTextures["enemy"])
+	e, err := NewEnemy(g, x, y)
 
 	if err != nil {
 		panic(fmt.Sprintf("Error generating enemy: %v", err))

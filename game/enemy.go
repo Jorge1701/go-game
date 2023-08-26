@@ -18,12 +18,12 @@ type Enemy struct {
 	game *Game
 }
 
-func NewEnemy(game *Game, x, y float64, texture *render.Texture) (*Enemy, error) {
+func NewEnemy(game *Game, x, y float64) (*Enemy, error) {
 	return &Enemy{
 		x:       x,
 		y:       y,
 		speed:   1,
-		texture: texture,
+		texture: render.AllTextures["enemy"],
 		game:    game,
 	}, nil
 }

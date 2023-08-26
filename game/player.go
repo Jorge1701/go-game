@@ -8,11 +8,14 @@ import (
 	"github.com/veandco/go-sdl2/sdl"
 )
 
+var lastFire = int64(0)
+
 type Player struct {
 	x float64
 	y float64
 
-	speed float64
+	speed    float64
+	fireRate float64
 
 	health int
 
@@ -21,15 +24,16 @@ type Player struct {
 	game *Game
 }
 
-func NewPlayer(game *Game, x, y float64, texture *render.Texture) (*Player, error) {
+func NewPlayer(game *Game, x, y float64) *Player {
 	return &Player{
-		x:       x,
-		y:       y,
-		speed:   2,
-		health:  5,
-		texture: texture,
-		game:    game,
-	}, nil
+		x:        x,
+		y:        y,
+		speed:    2,
+		fireRate: 1000,
+		health:   5,
+		texture:  render.AllTextures["player"],
+		game:     game,
+	}
 }
 
 func (p *Player) Update() {
