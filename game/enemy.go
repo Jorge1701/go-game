@@ -33,7 +33,7 @@ func (e *Enemy) Update() {
 
 	if collision.CheckCollision(e, e.game.player) {
 		e.game.player.GetHit()
-		e.game.DeleteEnemy(e)
+		e.game.deleteEnemy(e)
 	}
 
 	e.x += math.Cos(directionToPlayer) * e.speed

@@ -32,7 +32,7 @@ func NewBullet(game *Game, x, y, dir float64) *Bullet {
 func (b *Bullet) Update(enemies []*Enemy) {
 	for _, e := range enemies {
 		if collision.CheckCollision(b, e) {
-			b.game.DeleteEnemy(e)
+			b.game.deleteEnemy(e)
 			b.game.deleteBullet(b)
 			return
 		}

@@ -115,7 +115,7 @@ func (g *Game) nextStage() int {
 	return configuration.StartingEnemyCount*g.stage + g.stage
 }
 
-func (g *Game) DeleteEnemy(enemyToDelete *Enemy) {
+func (g *Game) deleteEnemy(enemyToDelete *Enemy) {
 	for i, e := range g.enemies {
 		if e == enemyToDelete {
 			g.enemies = slices.Delete(g.enemies, i, i+1)
