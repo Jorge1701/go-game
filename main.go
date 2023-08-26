@@ -9,10 +9,17 @@ import (
 	"runtime"
 
 	"github.com/veandco/go-sdl2/sdl"
+	"github.com/veandco/go-sdl2/ttf"
 )
 
 func run() int {
 	runtime.LockOSThread()
+
+	if err := ttf.Init(); err != nil {
+		fmt.Println("ERROR Initializing TTF")
+		return 500
+	}
+	defer ttf.Quit()
 
 	// Creating window
 	window, err := sdl.CreateWindow(
@@ -36,6 +43,14 @@ func run() int {
 		return 200
 	}
 	defer r.Destroy()
+
+	// Load texts
+	gameOverTexture, err := render.NewTextTexture(r, "Game Over!", 200, 50)
+	if err != nil {
+		fmt.Println("ERROR Creating text texture:", err)
+		return 501
+	}
+	defer gameOverTexture.Destroy()
 
 	// Load textures
 	render.LoadAllTextures(r)
@@ -69,15 +84,16 @@ func run() int {
 
 		r.RenderTexture(background, 0, 0)
 
-		g.Update()
+		if g.IsGameOver {
+			r.RenderTexture(gameOverTexture, 0, 0)
+		} else {
+			g.Update()
+		}
+
 		g.Render()
 
 		r.Present()
 		sdl.Delay(16)
-
-		if g.IsGameOver {
-			running = false
-		}
 	}
 
 	return 0
