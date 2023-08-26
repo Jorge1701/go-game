@@ -15,17 +15,26 @@ type Texture struct {
 }
 
 func LoadAllTextures(renderer *Renderer) error {
+	// Player texture
 	playerTexture, err := NewTexture(renderer, "resources/player.bmp", 19, 40)
 	if err != nil {
 		return fmt.Errorf("Error loading player texture: %v", err)
 	}
 	AllTextures["player"] = playerTexture
 
+	// Enemy texture
 	enemyTexture, err := NewTexture(renderer, "resources/enemy_1.bmp", 19, 17)
 	if err != nil {
 		return fmt.Errorf("Error loading enemy texture: %v", err)
 	}
 	AllTextures["enemy"] = enemyTexture
+
+	// Bullet texture
+	bulletTexture, err := NewTexture(renderer, "resources/bullet.bmp", 3, 3)
+	if err != nil {
+		return fmt.Errorf("Error loading enemy texture: %v", err)
+	}
+	AllTextures["bullet"] = bulletTexture
 
 	return nil
 }
