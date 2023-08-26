@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"game/audio"
 	"game/configuration"
 	"game/game"
 	"game/render"
@@ -20,6 +21,13 @@ func run() int {
 		return 500
 	}
 	defer ttf.Quit()
+
+	// Initialize audio
+	if err := audio.Initialize(); err != nil {
+		fmt.Println("ERROR Initializing audio:", err)
+		return 600
+	}
+	defer audio.Clear()
 
 	// Creating window
 	window, err := sdl.CreateWindow(
