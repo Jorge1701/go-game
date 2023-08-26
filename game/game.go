@@ -50,7 +50,7 @@ func (g *Game) Update() {
 	}
 
 	for _, b := range g.bullets {
-		b.Update()
+		b.Update(g.enemies)
 	}
 
 	for len(g.enemies) < g.maxEnemyCount {
@@ -126,6 +126,15 @@ func (g *Game) DeleteEnemy(enemyToDelete *Enemy) {
 				g.maxEnemyCount++
 			}
 
+			return
+		}
+	}
+}
+
+func (g *Game) deleteBullet(bulletToDelete *Bullet) {
+	for i, b := range g.bullets {
+		if b == bulletToDelete {
+			g.bullets = slices.Delete(g.bullets, i, i+1)
 			return
 		}
 	}
