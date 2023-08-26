@@ -37,7 +37,8 @@ func run() int {
 	}
 	defer r.Destroy()
 
-	render.LoadTextures(r)
+	// Load textures
+	render.LoadAllTextures(r)
 	defer render.ClearAllTextures()
 
 	// Loading background texture

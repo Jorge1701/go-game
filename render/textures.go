@@ -14,7 +14,7 @@ type Texture struct {
 	Height float64
 }
 
-func LoadTextures(renderer *Renderer) error {
+func LoadAllTextures(renderer *Renderer) error {
 	playerTexture, err := NewTexture(renderer, "resources/player.bmp", 19, 40)
 	if err != nil {
 		return fmt.Errorf("Error loading player texture: %v", err)
