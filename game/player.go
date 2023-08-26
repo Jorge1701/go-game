@@ -4,6 +4,7 @@ import (
 	"game/render"
 	"game/utils"
 	"math"
+	"time"
 
 	"github.com/veandco/go-sdl2/sdl"
 )
@@ -38,6 +39,17 @@ func NewPlayer(game *Game, x, y float64) *Player {
 
 func (p *Player) Update() {
 	keys := sdl.GetKeyboardState()
+
+	mouseX, mouseY, mouseState := sdl.GetMouseState()
+
+	if mouseState == sdl.ButtonLMask {
+		currT := time.Now().UnixMilli()
+		if currT-lastFire > int64(p.fireRate) {
+			lastFire = currT
+			dirToMouse := utils.Direction(p, &utils.Point{X: float64(mouseX), Y: float64(mouseY)})
+			p.game.createBullet(p.x, p.y, dirToMouse)
+		}
+	}
 
 	movePoint := &utils.Point{}
 
