@@ -22,7 +22,7 @@ func NewEnemy(game *Game, x, y float64) (*Enemy, error) {
 	return &Enemy{
 		x:       x,
 		y:       y,
-		speed:   1,
+		speed:   0.5,
 		texture: render.AllTextures["enemy"],
 		game:    game,
 	}, nil

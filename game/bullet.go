@@ -13,6 +13,8 @@ type Bullet struct {
 	xa float64
 	ya float64
 
+	speed float64
+
 	texture *render.Texture
 
 	game *Game
@@ -24,6 +26,7 @@ func NewBullet(game *Game, x, y, dir float64) *Bullet {
 		y:       y,
 		xa:      math.Cos(dir),
 		ya:      math.Sin(dir),
+		speed:   10,
 		texture: render.AllTextures["bullet"],
 		game:    game,
 	}
@@ -38,8 +41,8 @@ func (b *Bullet) Update(enemies []*Enemy) {
 		}
 	}
 
-	b.x += b.xa
-	b.y += b.ya
+	b.x += b.xa * b.speed
+	b.y += b.ya * b.speed
 }
 
 func (b *Bullet) GetX() float64 {

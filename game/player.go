@@ -29,8 +29,8 @@ func NewPlayer(game *Game, x, y float64) *Player {
 	return &Player{
 		x:        x,
 		y:        y,
-		speed:    2,
-		fireRate: 1000,
+		speed:    1,
+		fireRate: 500,
 		health:   5,
 		texture:  render.AllTextures["player"],
 		game:     game,
@@ -46,7 +46,7 @@ func (p *Player) Update() {
 		currT := time.Now().UnixMilli()
 		if currT-lastFire > p.fireRate {
 			lastFire = currT
-			dirToMouse := utils.Direction(p, &utils.Point{X: float64(mouseX), Y: float64(mouseY)})
+			dirToMouse := utils.Direction(&utils.Point{X: p.x, Y: p.y}, &utils.Point{X: float64(mouseX), Y: float64(mouseY)})
 			p.game.createBullet(p.x, p.y, dirToMouse)
 		}
 	}
