@@ -41,11 +41,11 @@ func (e *Enemy) Update() {
 }
 
 func (e *Enemy) GetX() float64 {
-	return e.x
+	return e.x - e.GetWidth()/2
 }
 
 func (e *Enemy) GetY() float64 {
-	return e.y
+	return e.y - e.GetHeight()/2
 }
 
 func (e *Enemy) GetTexture() *render.Texture {

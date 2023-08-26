@@ -43,11 +43,11 @@ func (b *Bullet) Update(enemies []*Enemy) {
 }
 
 func (b *Bullet) GetX() float64 {
-	return b.x
+	return b.x - b.GetWidth()/2
 }
 
 func (b *Bullet) GetY() float64 {
-	return b.y
+	return b.y - b.GetHeight()/2
 }
 
 func (b *Bullet) GetTexture() *render.Texture {

@@ -83,11 +83,11 @@ func (p *Player) GetHit() {
 }
 
 func (p *Player) GetX() float64 {
-	return p.x
+	return p.x - p.GetWidth()/2
 }
 
 func (p *Player) GetY() float64 {
-	return p.y
+	return p.y - p.GetHeight()/2
 }
 
 func (p *Player) GetTexture() *render.Texture {
