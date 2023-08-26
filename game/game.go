@@ -2,11 +2,19 @@ package game
 
 import (
 	"fmt"
+	"game/collision"
 	"game/configuration"
 	"game/render"
 	"math/rand"
 	"slices"
 )
+
+var gameBoundary = &collision.Rectangle{
+	X:      -10,
+	Y:      -10,
+	Width:  configuration.Width + 10,
+	Height: configuration.Height + 10,
+}
 
 type Game struct {
 	renderer *render.Renderer
@@ -50,7 +58,11 @@ func (g *Game) Update() {
 	}
 
 	for _, b := range g.bullets {
-		b.Update(g.enemies)
+		if collision.CheckCollision(b, gameBoundary) {
+			b.Update(g.enemies)
+		} else {
+			g.deleteBullet(b)
+		}
 	}
 
 	for len(g.enemies) < g.maxEnemyCount {
