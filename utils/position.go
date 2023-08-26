@@ -22,14 +22,6 @@ func Direction(from Position, to Position) float64 {
 	return math.Atan2(to.GetY()-from.GetY(), to.GetX()-from.GetX())
 }
 
-func DirectionTo(to Position) float64 {
-	return math.Atan2(to.GetY(), to.GetX())
-}
-
-func (p *Point) GetX() float64 {
-	return p.X
-}
-
-func (p *Point) GetY() float64 {
-	return p.Y
+func DirectionTo(to *Point) float64 {
+	return math.Atan2(to.Y, to.X)
 }
