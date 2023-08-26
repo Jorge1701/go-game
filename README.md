@@ -1,2 +1,2 @@
 # go-game
-Test game to try [veandco/go-sdl2](https://github.com/veandco/go-sdl2)
+Test game to try [hajimehoshi/ebiten](https://github.com/hajimehoshi/ebiten)
