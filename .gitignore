@@ -19,3 +19,7 @@
 
 # Go workspace file
 go.work
+
+# SDL
+SDL2/*
+SDL2_ttf/*
