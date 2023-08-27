@@ -5,9 +5,13 @@ import (
 	"game/audio"
 	"game/collision"
 	"game/configuration"
+	"game/images"
 	"game/render"
 	"math/rand"
 	"slices"
+
+	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 )
 
 var gameBoundary = &collision.Rectangle{
@@ -18,8 +22,6 @@ var gameBoundary = &collision.Rectangle{
 }
 
 type Game struct {
-	renderer *render.Renderer
-
 	player  *Player
 	enemies []*Enemy
 	bullets []*Bullet
@@ -31,9 +33,8 @@ type Game struct {
 	IsGameOver bool
 }
 
-func NewGame(renderer *render.Renderer) (g *Game, err error) {
-	g = &Game{
-		renderer:      renderer,
+func NewGame() *Game {
+	g := &Game{
 		enemies:       []*Enemy{},
 		bullets:       []*Bullet{},
 		stage:         1,
@@ -48,10 +49,10 @@ func NewGame(renderer *render.Renderer) (g *Game, err error) {
 		configuration.Height/2,
 	)
 
-	return g, err
+	return g
 }
 
-func (g *Game) Update() {
+func (g *Game) Update() error {
 	g.player.Update()
 
 	for _, e := range g.enemies {
@@ -77,18 +78,28 @@ func (g *Game) Update() {
 		g.nextStage(),
 		len(g.bullets),
 	)
+
+	return nil
 }
 
-func (g *Game) Render() {
-	g.renderer.RenderDrawable(g.player)
+func (g *Game) Draw(screen *ebiten.Image) {
+	ebitenutil.DebugPrint(screen, "Hello, World!")
+
+	images.AllImages["background"].Draw(screen, 0, 0)
+
+	render.Draw(g.player, screen)
 
 	for _, e := range g.enemies {
-		g.renderer.RenderDrawable(e)
+		render.Draw(e, screen)
 	}
 
 	for _, b := range g.bullets {
-		g.renderer.RenderDrawable(b)
+		render.Draw(b, screen)
 	}
+}
+
+func (g *Game) Layout(outsideWidth, outsideHeight int) (screenWidth, screenHeight int) {
+	return configuration.Width, configuration.Height
 }
 
 func (g *Game) createBullet(x, y, dir float64) {

@@ -2,11 +2,12 @@ package game
 
 import (
 	"game/audio"
-	"game/render"
+	"game/images"
 	"game/utils"
 	"math"
 	"time"
 
+	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/veandco/go-sdl2/sdl"
 )
 
@@ -21,7 +22,7 @@ type Player struct {
 
 	health int
 
-	texture *render.Texture
+	image *images.Image
 
 	game *Game
 }
@@ -33,7 +34,7 @@ func NewPlayer(game *Game, x, y float64) *Player {
 		speed:    1,
 		fireRate: 500,
 		health:   5,
-		texture:  render.AllTextures["player"],
+		image:    images.AllImages["player"],
 		game:     game,
 	}
 }
@@ -86,21 +87,21 @@ func (p *Player) GetHit() {
 }
 
 func (p *Player) GetX() float64 {
-	return p.x - p.GetWidth()/2
+	return p.x - float64(p.GetWidth()/2)
 }
 
 func (p *Player) GetY() float64 {
-	return p.y - p.GetHeight()/2
+	return p.y - float64(p.GetHeight()/2)
 }
 
-func (p *Player) GetTexture() *render.Texture {
-	return p.texture
+func (p *Player) GetImage() *images.Image {
+	return p.image
 }
 
-func (p *Player) GetWidth() float64 {
-	return p.texture.Width
+func (p *Player) GetWidth() int {
+	return p.image.Image.Bounds().Dx()
 }
 
-func (p *Player) GetHeight() float64 {
-	return p.texture.Height
+func (p *Player) GetHeight() int {
+	return p.image.Image.Bounds().Dy()
 }

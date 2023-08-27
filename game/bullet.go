@@ -3,7 +3,7 @@ package game
 import (
 	"game/audio"
 	"game/collision"
-	"game/render"
+	"game/images"
 	"math"
 )
 
@@ -16,20 +16,20 @@ type Bullet struct {
 
 	speed float64
 
-	texture *render.Texture
+	image *images.Image
 
 	game *Game
 }
 
 func NewBullet(game *Game, x, y, dir float64) *Bullet {
 	return &Bullet{
-		x:       x,
-		y:       y,
-		xa:      math.Cos(dir),
-		ya:      math.Sin(dir),
-		speed:   10,
-		texture: render.AllTextures["bullet"],
-		game:    game,
+		x:     x,
+		y:     y,
+		xa:    math.Cos(dir),
+		ya:    math.Sin(dir),
+		speed: 10,
+		image: images.AllImages["bullet"],
+		game:  game,
 	}
 }
 
@@ -48,21 +48,21 @@ func (b *Bullet) Update(enemies []*Enemy) {
 }
 
 func (b *Bullet) GetX() float64 {
-	return b.x - b.GetWidth()/2
+	return b.x - float64(b.GetWidth()/2)
 }
 
 func (b *Bullet) GetY() float64 {
-	return b.y - b.GetHeight()/2
+	return b.y - float64(b.GetHeight()/2)
 }
 
-func (b *Bullet) GetTexture() *render.Texture {
-	return b.texture
+func (b *Bullet) GetImage() *images.Image {
+	return b.image
 }
 
-func (b *Bullet) GetWidth() float64 {
-	return b.texture.Width
+func (b *Bullet) GetWidth() int {
+	return b.image.Image.Bounds().Dx()
 }
 
-func (b *Bullet) GetHeight() float64 {
-	return b.texture.Height
+func (b *Bullet) GetHeight() int {
+	return b.image.Image.Bounds().Dy()
 }
