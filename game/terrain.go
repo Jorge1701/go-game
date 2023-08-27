@@ -24,8 +24,8 @@ var world = [][]int{
 	{0, 0, 0, 0, 0, 0, 0, 0, 2, 3},
 	{0, 0, 0, 0, 0, 0, 0, 0, 2, 3},
 	{0, 0, 0, 0, 0, 0, 0, 0, 2, 3},
-	{0, 0, 0, 0, 0, 0, 2, 2, 2, 3},
-	{2, 2, 2, 2, 2, 2, 2, 3, 3, 3},
+	{0, 0, 0, 0, 2, 2, 2, 2, 2, 3},
+	{2, 2, 2, 2, 2, 3, 3, 3, 3, 3},
 	{3, 3, 3, 3, 3, 3, 3, 3, 3, 3},
 }
 
@@ -40,8 +40,8 @@ func NewTerrain(game *Game) *Terrain {
 }
 
 func (t *Terrain) Draw(screen *ebiten.Image) {
-	for x, row := range world {
-		for y, tileId := range row {
+	for y, data := range world {
+		for x, tileId := range data {
 			t.game.imageManager.DrawImage(
 				screen,
 				tiles[tileId],

@@ -79,7 +79,7 @@ func NewGame() (*Game, error) {
 }
 
 func (g *Game) Update() error {
-	// Calculate deltaTime time since last updata
+	// Calculate deltaTime time since last update
 	currT := time.Now().UnixMilli()
 	deltaTime := currT - g.lastUpdate
 	g.lastUpdate = currT
