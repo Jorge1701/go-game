@@ -5,8 +5,7 @@ import (
 	"game/audio"
 	"game/collision"
 	"game/configuration"
-	"game/images"
-	"game/render"
+	"game/graphics"
 	"math/rand"
 	"slices"
 
@@ -85,16 +84,16 @@ func (g *Game) Update() error {
 func (g *Game) Draw(screen *ebiten.Image) {
 	ebitenutil.DebugPrint(screen, "Hello, World!")
 
-	images.AllImages["background"].Draw(screen, 0, 0)
+	graphics.AllImages["background"].Draw(screen, 0, 0)
 
-	render.Draw(g.player, screen)
+	graphics.Draw(g.player, screen)
 
 	for _, e := range g.enemies {
-		render.Draw(e, screen)
+		graphics.Draw(e, screen)
 	}
 
 	for _, b := range g.bullets {
-		render.Draw(b, screen)
+		graphics.Draw(b, screen)
 	}
 }
 

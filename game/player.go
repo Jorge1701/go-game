@@ -2,12 +2,11 @@ package game
 
 import (
 	"game/audio"
-	"game/images"
+	"game/graphics"
 	"game/utils"
 	"math"
 	"time"
 
-	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/veandco/go-sdl2/sdl"
 )
 
@@ -22,7 +21,7 @@ type Player struct {
 
 	health int
 
-	image *images.Image
+	image *graphics.Image
 
 	game *Game
 }
@@ -34,7 +33,7 @@ func NewPlayer(game *Game, x, y float64) *Player {
 		speed:    1,
 		fireRate: 500,
 		health:   5,
-		image:    images.AllImages["player"],
+		image:    graphics.AllImages["player"],
 		game:     game,
 	}
 }
@@ -94,7 +93,7 @@ func (p *Player) GetY() float64 {
 	return p.y - float64(p.GetHeight()/2)
 }
 
-func (p *Player) GetImage() *images.Image {
+func (p *Player) GetImage() *graphics.Image {
 	return p.image
 }
 

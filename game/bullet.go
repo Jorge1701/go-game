@@ -3,7 +3,7 @@ package game
 import (
 	"game/audio"
 	"game/collision"
-	"game/images"
+	"game/graphics"
 	"math"
 )
 
@@ -16,7 +16,7 @@ type Bullet struct {
 
 	speed float64
 
-	image *images.Image
+	image *graphics.Image
 
 	game *Game
 }
@@ -28,7 +28,7 @@ func NewBullet(game *Game, x, y, dir float64) *Bullet {
 		xa:    math.Cos(dir),
 		ya:    math.Sin(dir),
 		speed: 10,
-		image: images.AllImages["bullet"],
+		image: graphics.AllImages["bullet"],
 		game:  game,
 	}
 }
@@ -55,7 +55,7 @@ func (b *Bullet) GetY() float64 {
 	return b.y - float64(b.GetHeight()/2)
 }
 
-func (b *Bullet) GetImage() *images.Image {
+func (b *Bullet) GetImage() *graphics.Image {
 	return b.image
 }
 

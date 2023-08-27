@@ -2,7 +2,7 @@ package game
 
 import (
 	"game/collision"
-	"game/images"
+	"game/graphics"
 	"game/utils"
 	"math"
 )
@@ -13,7 +13,7 @@ type Enemy struct {
 
 	speed float64
 
-	image *images.Image
+	image *graphics.Image
 
 	game *Game
 }
@@ -23,7 +23,7 @@ func NewEnemy(game *Game, x, y float64) (*Enemy, error) {
 		x:     x,
 		y:     y,
 		speed: 0.5,
-		image: images.AllImages["enemy"],
+		image: graphics.AllImages["enemy"],
 		game:  game,
 	}, nil
 }
@@ -48,7 +48,7 @@ func (e *Enemy) GetY() float64 {
 	return e.y - float64(e.GetHeight()/2)
 }
 
-func (e *Enemy) GetImage() *images.Image {
+func (e *Enemy) GetImage() *graphics.Image {
 	return e.image
 }
 

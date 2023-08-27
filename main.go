@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"game/configuration"
 	"game/game"
-	"game/images"
+	"game/graphics"
 	"os"
 
 	"github.com/hajimehoshi/ebiten/v2"
@@ -12,7 +12,7 @@ import (
 
 func main() {
 	// Load all images
-	if err := images.LoadImages(); err != nil {
+	if err := graphics.LoadImages(); err != nil {
 		fmt.Println("Error loading images:", err)
 		os.Exit(1)
 	}
