@@ -13,6 +13,7 @@ var allAudioBytes = map[string][]byte{}
 
 type AudioPlayer struct {
 	audioContext *audio.Context
+	volume       float64
 }
 
 func NewAudioPlayer() (*AudioPlayer, error) {
@@ -28,6 +29,7 @@ func NewAudioPlayer() (*AudioPlayer, error) {
 
 	return &AudioPlayer{
 		audioContext: audioContext,
+		volume:       configuration.Volume,
 	}, nil
 }
 
@@ -35,6 +37,7 @@ func NewAudioPlayer() (*AudioPlayer, error) {
 // Good for quick effects that will overlap with multiple instances of the same audio
 func (ap *AudioPlayer) PlayFromBytes(audioName string) {
 	player := ap.audioContext.NewPlayerFromBytes(allAudioBytes[audioName])
+	player.SetVolume(ap.volume)
 	player.Play()
 }
 
@@ -47,7 +50,19 @@ func (ap *AudioPlayer) PlayFromReader(audioName string) error {
 		return fmt.Errorf("Error playing from audio reader [name:%s]: %v", audioName, err)
 	}
 
+	player.SetVolume(ap.volume)
 	player.Play()
 
 	return nil
+}
+
+// SetVolume changes the volume at which all audios will be played
+func (ap *AudioPlayer) SetVolume(volume int) {
+	if volume < 0 {
+		volume = 0
+	} else if volume > 100 {
+		volume = 100
+	}
+
+	ap.volume = float64(volume) / 100
 }
