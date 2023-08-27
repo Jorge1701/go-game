@@ -5,9 +5,12 @@ import (
 	"game/audio"
 	"game/collision"
 	"game/configuration"
-	"game/render"
+	"game/graphics"
 	"math/rand"
 	"slices"
+
+	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 )
 
 var gameBoundary = &collision.Rectangle{
@@ -18,11 +21,10 @@ var gameBoundary = &collision.Rectangle{
 }
 
 type Game struct {
-	renderer *render.Renderer
-
-	player  *Player
-	enemies []*Enemy
-	bullets []*Bullet
+	audioPlayer *audio.AudioPlayer
+	player      *Player
+	enemies     []*Enemy
+	bullets     []*Bullet
 
 	stage         int
 	killedEnemies int
@@ -31,9 +33,14 @@ type Game struct {
 	IsGameOver bool
 }
 
-func NewGame(renderer *render.Renderer) (g *Game, err error) {
-	g = &Game{
-		renderer:      renderer,
+func NewGame() *Game {
+	audioPlayer, err := audio.NewAudioPlayer()
+	if err != nil {
+		panic(err)
+	}
+
+	game := &Game{
+		audioPlayer:   audioPlayer,
 		enemies:       []*Enemy{},
 		bullets:       []*Bullet{},
 		stage:         1,
@@ -42,16 +49,16 @@ func NewGame(renderer *render.Renderer) (g *Game, err error) {
 		IsGameOver:    false,
 	}
 
-	g.player = NewPlayer(
-		g,
+	game.player = NewPlayer(
+		game,
 		configuration.Width/2,
 		configuration.Height/2,
 	)
 
-	return g, err
+	return game
 }
 
-func (g *Game) Update() {
+func (g *Game) Update() error {
 	g.player.Update()
 
 	for _, e := range g.enemies {
@@ -77,18 +84,28 @@ func (g *Game) Update() {
 		g.nextStage(),
 		len(g.bullets),
 	)
+
+	return nil
 }
 
-func (g *Game) Render() {
-	g.renderer.RenderDrawable(g.player)
+func (g *Game) Draw(screen *ebiten.Image) {
+	ebitenutil.DebugPrint(screen, "Hello, World!")
+
+	graphics.AllImages["background"].Draw(screen, 0, 0)
+
+	graphics.Draw(g.player, screen)
 
 	for _, e := range g.enemies {
-		g.renderer.RenderDrawable(e)
+		graphics.Draw(e, screen)
 	}
 
 	for _, b := range g.bullets {
-		g.renderer.RenderDrawable(b)
+		graphics.Draw(b, screen)
 	}
+}
+
+func (g *Game) Layout(outsideWidth, outsideHeight int) (screenWidth, screenHeight int) {
+	return configuration.Width, configuration.Height
 }
 
 func (g *Game) createBullet(x, y, dir float64) {
@@ -155,5 +172,5 @@ func (g *Game) deleteBullet(bulletToDelete *Bullet) {
 
 func (g *Game) GameOver() {
 	g.IsGameOver = true
-	audio.AllAudios["game_over"].Play()
+	g.audioPlayer.PlayFromBytes("game_over")
 }

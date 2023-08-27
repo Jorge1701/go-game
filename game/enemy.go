@@ -2,7 +2,7 @@ package game
 
 import (
 	"game/collision"
-	"game/render"
+	"game/graphics"
 	"game/utils"
 	"math"
 )
@@ -13,18 +13,18 @@ type Enemy struct {
 
 	speed float64
 
-	texture *render.Texture
+	image *graphics.Image
 
 	game *Game
 }
 
 func NewEnemy(game *Game, x, y float64) (*Enemy, error) {
 	return &Enemy{
-		x:       x,
-		y:       y,
-		speed:   0.5,
-		texture: render.AllTextures["enemy"],
-		game:    game,
+		x:     x,
+		y:     y,
+		speed: 0.5,
+		image: graphics.AllImages["enemy"],
+		game:  game,
 	}, nil
 }
 
@@ -41,21 +41,21 @@ func (e *Enemy) Update() {
 }
 
 func (e *Enemy) GetX() float64 {
-	return e.x - e.GetWidth()/2
+	return e.x - float64(e.GetWidth()/2)
 }
 
 func (e *Enemy) GetY() float64 {
-	return e.y - e.GetHeight()/2
+	return e.y - float64(e.GetHeight()/2)
 }
 
-func (e *Enemy) GetTexture() *render.Texture {
-	return e.texture
+func (e *Enemy) GetImage() *graphics.Image {
+	return e.image
 }
 
-func (e *Enemy) GetWidth() float64 {
-	return e.texture.Width
+func (e *Enemy) GetWidth() int {
+	return e.image.Image.Bounds().Dx()
 }
 
-func (e *Enemy) GetHeight() float64 {
-	return e.texture.Height
+func (e *Enemy) GetHeight() int {
+	return e.image.Image.Bounds().Dy()
 }

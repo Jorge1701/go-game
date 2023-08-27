@@ -1,13 +1,13 @@
 package game
 
 import (
-	"game/audio"
-	"game/render"
+	"game/graphics"
 	"game/utils"
 	"math"
 	"time"
 
-	"github.com/veandco/go-sdl2/sdl"
+	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/hajimehoshi/ebiten/v2/inpututil"
 )
 
 var lastFire = int64(0)
@@ -21,7 +21,7 @@ type Player struct {
 
 	health int
 
-	texture *render.Texture
+	image *graphics.Image
 
 	game *Game
 }
@@ -33,39 +33,43 @@ func NewPlayer(game *Game, x, y float64) *Player {
 		speed:    1,
 		fireRate: 500,
 		health:   5,
-		texture:  render.AllTextures["player"],
+		image:    graphics.AllImages["player"],
 		game:     game,
 	}
 }
 
 func (p *Player) Update() {
-	keys := sdl.GetKeyboardState()
-
-	mouseX, mouseY, mouseState := sdl.GetMouseState()
-
-	if mouseState == sdl.ButtonLMask {
+	// Check mouse input
+	if ebiten.IsMouseButtonPressed(ebiten.MouseButton0) {
+		mouseX, mouseY := ebiten.CursorPosition()
 		currT := time.Now().UnixMilli()
+
 		if currT-lastFire > p.fireRate {
 			lastFire = currT
 			dirToMouse := utils.Direction(&utils.Point{X: p.x, Y: p.y}, &utils.Point{X: float64(mouseX), Y: float64(mouseY)})
 			p.game.createBullet(p.x, p.y, dirToMouse)
-			audio.AllAudios["shot"].Play()
+			p.game.audioPlayer.PlayFromBytes("shot")
 		}
 	}
 
+	// Checkout keyboard input
+	keys := inpututil.AppendPressedKeys([]ebiten.Key{})
+
 	movePoint := &utils.Point{}
 
-	if keys[sdl.SCANCODE_A] == 1 {
-		movePoint.X--
-	}
-	if keys[sdl.SCANCODE_D] == 1 {
-		movePoint.X++
-	}
-	if keys[sdl.SCANCODE_W] == 1 {
-		movePoint.Y--
-	}
-	if keys[sdl.SCANCODE_S] == 1 {
-		movePoint.Y++
+	for _, key := range keys {
+		if key == ebiten.KeyA {
+			movePoint.X--
+		}
+		if key == ebiten.KeyD {
+			movePoint.X++
+		}
+		if key == ebiten.KeyW {
+			movePoint.Y--
+		}
+		if key == ebiten.KeyS {
+			movePoint.Y++
+		}
 	}
 
 	if movePoint.X != 0 || movePoint.Y != 0 {
@@ -78,7 +82,7 @@ func (p *Player) Update() {
 
 func (p *Player) GetHit() {
 	p.health--
-	audio.AllAudios["player_hit"].Play()
+	p.game.audioPlayer.PlayFromBytes("player_hit")
 
 	if p.health <= 0 {
 		p.game.GameOver()
@@ -86,21 +90,21 @@ func (p *Player) GetHit() {
 }
 
 func (p *Player) GetX() float64 {
-	return p.x - p.GetWidth()/2
+	return p.x - float64(p.GetWidth()/2)
 }
 
 func (p *Player) GetY() float64 {
-	return p.y - p.GetHeight()/2
+	return p.y - float64(p.GetHeight()/2)
 }
 
-func (p *Player) GetTexture() *render.Texture {
-	return p.texture
+func (p *Player) GetImage() *graphics.Image {
+	return p.image
 }
 
-func (p *Player) GetWidth() float64 {
-	return p.texture.Width
+func (p *Player) GetWidth() int {
+	return p.image.Image.Bounds().Dx()
 }
 
-func (p *Player) GetHeight() float64 {
-	return p.texture.Height
+func (p *Player) GetHeight() int {
+	return p.image.Image.Bounds().Dy()
 }
