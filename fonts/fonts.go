@@ -1,35 +1,28 @@
 package fonts
 
 import (
-	"fmt"
-	"os"
+	"image/color"
 
+	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/hajimehoshi/ebiten/v2/text"
 	"golang.org/x/image/font"
-	"golang.org/x/image/font/opentype"
 )
 
-var Font font.Face
+var allFontFaces = map[string]*font.Face{}
 
-func LoadFonts() {
-	file, err := os.ReadFile("resources/font.ttf")
-	if err != nil {
-		fmt.Println("Error loading font")
-		os.Exit(1)
-	}
-	tt, err := opentype.Parse(file)
-	if err != nil {
-		fmt.Println("Error loading font")
-		os.Exit(1)
+type FontManager struct{}
+
+func NewFontManager() (*FontManager, error) {
+	// Load all font files
+	for _, fontFile := range allFontFiles {
+		if err := loadFonts(fontFile.alias, fontFile.file, fontFile.size); err != nil {
+			return nil, err
+		}
 	}
 
-	font, err := opentype.NewFace(tt, &opentype.FaceOptions{
-		Size:    24,
-		DPI:     72,
-		Hinting: font.HintingVertical,
-	})
-	if err != nil {
-		fmt.Println("Error loading font")
-		os.Exit(1)
-	}
-	Font = font
+	return &FontManager{}, nil
+}
+
+func (fm *FontManager) ShowText(screen *ebiten.Image, textToShow, fontAlias string, x, y int, color color.Color) {
+	text.Draw(screen, textToShow, *allFontFaces[fontAlias], x, y, color)
 }

@@ -13,7 +13,6 @@ import (
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
-	"github.com/hajimehoshi/ebiten/v2/text"
 )
 
 var gameBoundary = &engine.Rectangle{
@@ -26,6 +25,7 @@ var gameBoundary = &engine.Rectangle{
 }
 
 type Game struct {
+	fontManager  *fonts.FontManager
 	imageManager *image.ImageManager
 	audioPlayer  *audio.AudioPlayer
 	player       *Player
@@ -40,7 +40,12 @@ type Game struct {
 }
 
 func NewGame() *Game {
-	fonts.LoadFonts()
+	// Create font manager
+	fontManager, err := fonts.NewFontManager()
+	if err != nil {
+		// FIX
+		panic(err)
+	}
 
 	// Create image manager
 	imageManager, err := image.NewImageManager()
@@ -57,6 +62,7 @@ func NewGame() *Game {
 	}
 
 	game := &Game{
+		fontManager:   fontManager,
 		imageManager:  imageManager,
 		audioPlayer:   audioPlayer,
 		enemies:       []*Enemy{},
@@ -126,7 +132,8 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	}
 
 	if g.IsGameOver {
-		text.Draw(screen, "Game Over!", fonts.Font,
+		g.fontManager.ShowText(screen, "Game Over!",
+			"principal",
 			configuration.Width/2,
 			configuration.Height/2,
 			color.Black,
