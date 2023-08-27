@@ -21,9 +21,10 @@ var gameBoundary = &collision.Rectangle{
 }
 
 type Game struct {
-	player  *Player
-	enemies []*Enemy
-	bullets []*Bullet
+	audioPlayer *audio.AudioPlayer
+	player      *Player
+	enemies     []*Enemy
+	bullets     []*Bullet
 
 	stage         int
 	killedEnemies int
@@ -33,7 +34,13 @@ type Game struct {
 }
 
 func NewGame() *Game {
-	g := &Game{
+	audioPlayer, err := audio.NewAudioPlayer()
+	if err != nil {
+		panic(err)
+	}
+
+	game := &Game{
+		audioPlayer:   audioPlayer,
 		enemies:       []*Enemy{},
 		bullets:       []*Bullet{},
 		stage:         1,
@@ -42,13 +49,13 @@ func NewGame() *Game {
 		IsGameOver:    false,
 	}
 
-	g.player = NewPlayer(
-		g,
+	game.player = NewPlayer(
+		game,
 		configuration.Width/2,
 		configuration.Height/2,
 	)
 
-	return g
+	return game
 }
 
 func (g *Game) Update() error {
@@ -165,5 +172,5 @@ func (g *Game) deleteBullet(bulletToDelete *Bullet) {
 
 func (g *Game) GameOver() {
 	g.IsGameOver = true
-	audio.AllAudios["game_over"].Play()
+	// audio.AllAudios["game_over"].Play()
 }

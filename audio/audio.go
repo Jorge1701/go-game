@@ -1,71 +1,103 @@
 package audio
 
 import (
+	"bytes"
 	"fmt"
+	"game/configuration"
+	"io"
+	"os"
 
-	"github.com/veandco/go-sdl2/mix"
-	"github.com/veandco/go-sdl2/sdl"
+	"github.com/hajimehoshi/ebiten/v2/audio"
+	"github.com/hajimehoshi/ebiten/v2/audio/mp3"
+	"github.com/hajimehoshi/ebiten/v2/audio/wav"
 )
 
-var AllAudios = map[string]*Audio{}
+var allAudioReaders = map[string]io.Reader{}
+var allAudioBytes = map[string][]byte{}
 
-type Audio struct {
-	chunk *mix.Chunk
+type AudioPlayer struct {
+	audioContext *audio.Context
 }
 
-func (a *Audio) Play() {
-	a.chunk.Play(1, 0)
+func NewAudioPlayer() (*AudioPlayer, error) {
+	audioContext := audio.NewContext(configuration.SampleRate)
+
+	if err := loadAllAudios(); err != nil {
+		return nil, fmt.Errorf("Error loading audios: %v", err)
+	}
+
+	return &AudioPlayer{
+		audioContext: audioContext,
+	}, nil
 }
 
-func Initialize() error {
-	// Initialize audio
-	if err := sdl.Init(sdl.INIT_AUDIO); err != nil {
-		return err
-	}
-
-	// Open audio device
-	if err := mix.OpenAudio(44100, mix.DEFAULT_FORMAT, 2, 8); err != nil {
-		return err
-	}
-
-	// Load audio files
-	if err := loadAudio("shot", "resources/shot.wav"); err != nil {
-		return err
-	}
-	if err := loadAudio("player_hit", "resources/player_hit.wav"); err != nil {
-		return err
-	}
-	if err := loadAudio("enemy_dead", "resources/enemy_dead.wav"); err != nil {
-		return err
-	}
-	if err := loadAudio("game_over", "resources/game_over.wav"); err != nil {
-		return err
-	}
-
-	return nil
+func (ap *AudioPlayer) PlayFromBytes(audioName string) {
+	player := ap.audioContext.NewPlayerFromBytes(allAudioBytes[audioName])
+	player.Play()
 }
 
-func loadAudio(name, file string) error {
-	// Load chunk from file
-	chunk, err := mix.LoadWAV(file)
-
+func (ap *AudioPlayer) PlayFromReader(audioName string) error {
+	player, err := ap.audioContext.NewPlayer(allAudioReaders[audioName])
 	if err != nil {
-		return fmt.Errorf("Error loading audio (%s, %s): %v", name, file, err)
+		return fmt.Errorf("Error playing from audio reader [name:%s]: %v", audioName, err)
 	}
 
-	// Save loaded chunk as audio in memory
-	AllAudios[name] = &Audio{
-		chunk: chunk,
+	player.Play()
+
+	return nil
+}
+
+type AudioType int
+
+const (
+	WAV AudioType = 0
+	MP3 AudioType = 1
+)
+
+func loadAllAudios() error {
+	if err := loadAudio("enemy_dead", "resources/enemy_dead.mp3", MP3); err != nil {
+		return err
+	}
+	if err := loadAudio("player_hit", "resources/player_hit.wav", WAV); err != nil {
+		return err
+	}
+	if err := loadAudio("game_over", "resources/game_over.wav", WAV); err != nil {
+		return err
 	}
 
 	return nil
 }
 
-func Clear() {
-	for _, a := range AllAudios {
-		a.chunk.Free()
+func loadAudio(name, file string, audioType AudioType) error {
+	fileBytes, err := os.ReadFile(file)
+	if err != nil {
+		return fmt.Errorf("Error loading audio file [name:%s] [file:%s]: %v", name, file, err)
 	}
 
-	sdl.Quit()
-	mix.CloseAudio()
+	var reader io.Reader
+
+	switch audioType {
+	case WAV:
+		stream, err := wav.DecodeWithSampleRate(configuration.SampleRate, bytes.NewReader(fileBytes))
+		if err != nil {
+			return fmt.Errorf("Error decoding wav bytes [name:%s] [file:%s]: %v", name, file, err)
+		}
+		reader = stream
+	case MP3:
+		stream, err := mp3.DecodeWithSampleRate(configuration.SampleRate, bytes.NewBuffer(fileBytes))
+		if err != nil {
+			return fmt.Errorf("Error decoding mp3 bytes [name:%s] [file:%s]: %v", name, file, err)
+		}
+		reader = stream
+	}
+
+	allAudioReaders[name] = reader
+
+	bytesFromStream, err := io.ReadAll(reader)
+	if err != nil {
+		return fmt.Errorf("Error reading bytes from audio stream [name:%s] [file:%s]: %v", name, file, err)
+	}
+	allAudioBytes[name] = bytesFromStream
+
+	return nil
 }
