@@ -1,6 +1,7 @@
 package game
 
 import (
+	"game/configuration"
 	"game/engine"
 	"game/graphics"
 	"game/utils"
@@ -12,6 +13,11 @@ import (
 )
 
 var lastFire = int64(0)
+
+var screenCenter = &engine.Point{
+	X: configuration.Width / 2,
+	Y: configuration.Height / 2,
+}
 
 type Player struct {
 	drawable *graphics.Drawable
@@ -54,7 +60,7 @@ func (p *Player) Update() {
 			lastFire = currT
 
 			dirToMouse := utils.Direction(
-				p.drawable.Rect.Position,
+				screenCenter,
 				&engine.Point{X: float64(mouseX), Y: float64(mouseY)},
 			)
 
