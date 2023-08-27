@@ -37,7 +37,7 @@ func NewPlayer(game *Game, x, y float64) *Player {
 			},
 			ImageAlias: "player",
 		},
-		speed:    1,
+		speed:    0.4,
 		fireRate: 500,
 		health:   5,
 		game:     game,
@@ -52,14 +52,14 @@ func (p *Player) Update() {
 
 		if currT-lastFire > p.fireRate {
 			lastFire = currT
+			center := getCenter(p)
+
 			dirToMouse := utils.Direction(
-				p.drawable.Rect.Position,
+				center,
 				&engine.Point{X: float64(mouseX), Y: float64(mouseY)},
 			)
-			p.game.createBullet(
-				p.drawable.Rect.Position,
-				dirToMouse,
-			)
+
+			p.game.createBullet(center, dirToMouse)
 			p.game.audioPlayer.PlayFromBytes("shot")
 		}
 	}
@@ -98,5 +98,12 @@ func (p *Player) GetHit() {
 
 	if p.health <= 0 {
 		p.game.GameOver()
+	}
+}
+
+func getCenter(p *Player) *engine.Point {
+	return &engine.Point{
+		X: p.drawable.Rect.Position.X + float64(p.drawable.Rect.Width)/2,
+		Y: p.drawable.Rect.Position.Y + float64(p.drawable.Rect.Height)/2,
 	}
 }
