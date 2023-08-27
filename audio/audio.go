@@ -29,7 +29,7 @@ func NewAudioPlayer() (*AudioPlayer, error) {
 
 	return &AudioPlayer{
 		audioContext: audioContext,
-		volume:       configuration.Volume,
+		volume:       float64(configuration.Volume) / 100,
 	}, nil
 }
 
