@@ -6,6 +6,8 @@ import (
 	"math"
 	"time"
 
+	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/hajimehoshi/ebiten/v2/inpututil"
 	"github.com/veandco/go-sdl2/sdl"
 )
 
@@ -38,8 +40,6 @@ func NewPlayer(game *Game, x, y float64) *Player {
 }
 
 func (p *Player) Update() {
-	keys := sdl.GetKeyboardState()
-
 	mouseX, mouseY, mouseState := sdl.GetMouseState()
 
 	if mouseState == sdl.ButtonLMask {
@@ -52,19 +52,23 @@ func (p *Player) Update() {
 		}
 	}
 
+	keys := inpututil.AppendPressedKeys([]ebiten.Key{})
+
 	movePoint := &utils.Point{}
 
-	if keys[sdl.SCANCODE_A] == 1 {
-		movePoint.X--
-	}
-	if keys[sdl.SCANCODE_D] == 1 {
-		movePoint.X++
-	}
-	if keys[sdl.SCANCODE_W] == 1 {
-		movePoint.Y--
-	}
-	if keys[sdl.SCANCODE_S] == 1 {
-		movePoint.Y++
+	for _, key := range keys {
+		if key == ebiten.KeyA {
+			movePoint.X--
+		}
+		if key == ebiten.KeyD {
+			movePoint.X++
+		}
+		if key == ebiten.KeyW {
+			movePoint.Y--
+		}
+		if key == ebiten.KeyS {
+			movePoint.Y++
+		}
 	}
 
 	if movePoint.X != 0 || movePoint.Y != 0 {
