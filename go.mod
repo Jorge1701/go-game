@@ -2,10 +2,7 @@ module game
 
 go 1.21.0
 
-require (
-	github.com/hajimehoshi/ebiten/v2 v2.5.7
-	github.com/veandco/go-sdl2 v0.5.0-alpha.4.0.20230805032533-9405dd390eb0
-)
+require github.com/hajimehoshi/ebiten/v2 v2.5.7
 
 require (
 	github.com/ebitengine/purego v0.4.0 // indirect
