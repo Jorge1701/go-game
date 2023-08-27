@@ -12,7 +12,8 @@ type Bullet struct {
 	xa float64
 	ya float64
 
-	speed float64
+	speed    float64
+	duration int64
 
 	game *Game
 }
@@ -30,14 +31,22 @@ func NewBullet(game *Game, x, y, dir float64) *Bullet {
 			},
 			ImageAlias: "bullet",
 		},
-		xa:    math.Cos(dir),
-		ya:    math.Sin(dir),
-		speed: 10,
-		game:  game,
+		xa:       math.Cos(dir),
+		ya:       math.Sin(dir),
+		speed:    10,
+		duration: 1000,
+		game:     game,
 	}
 }
 
-func (b *Bullet) Update(enemies []*Enemy) {
+func (b *Bullet) Update(dt int64, enemies []*Enemy) {
+	// Check if bullet should disappear
+	b.duration -= dt
+	if b.duration <= 0 {
+		b.game.deleteBullet(b)
+		return
+	}
+
 	for _, e := range enemies {
 		if engine.CheckCollision(b.drawable.Rect, e.drawable.Rect) {
 			b.game.audioPlayer.PlayFromBytes("enemy_dead")

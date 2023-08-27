@@ -6,7 +6,7 @@ const (
 	Width  = 400
 	Height = 350
 
-	Volume     = 30
+	Volume     = 10
 	SampleRate = 44100
 
 	StartingEnemyCount = 5

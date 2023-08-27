@@ -8,7 +8,10 @@ import (
 
 var allImages = map[string]*ebiten.Image{}
 
-type ImageManager struct{}
+type ImageManager struct {
+	XOffSet float64
+	YOffSet float64
+}
 
 func NewImageManager() (*ImageManager, error) {
 	// Load all configured image files
@@ -23,12 +26,12 @@ func NewImageManager() (*ImageManager, error) {
 
 func (im *ImageManager) DrawImage(screen *ebiten.Image, alias string, x, y float64) {
 	options := &ebiten.DrawImageOptions{}
-	options.GeoM.Translate(x, y)
+	options.GeoM.Translate(x-im.XOffSet, y-im.YOffSet)
 	screen.DrawImage(allImages[alias], options)
 }
 
 func (im *ImageManager) Draw(screen *ebiten.Image, drawable *graphics.Drawable) {
 	options := &ebiten.DrawImageOptions{}
-	options.GeoM.Translate(drawable.Rect.CenterX(), drawable.Rect.CenterY())
+	options.GeoM.Translate(drawable.Rect.CenterX()-im.XOffSet, drawable.Rect.CenterY()-im.YOffSet)
 	screen.DrawImage(allImages[drawable.ImageAlias], options)
 }
