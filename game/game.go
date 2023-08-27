@@ -39,26 +39,23 @@ type Game struct {
 	IsGameOver bool
 }
 
-func NewGame() *Game {
+func NewGame() (*Game, error) {
 	// Create font manager
 	fontManager, err := fonts.NewFontManager()
 	if err != nil {
-		// FIX
-		panic(err)
+		return nil, err
 	}
 
 	// Create image manager
 	imageManager, err := image.NewImageManager()
 	if err != nil {
-		// FIX
-		panic(err)
+		return nil, err
 	}
 
 	// Create audio player
 	audioPlayer, err := audio.NewAudioPlayer()
 	if err != nil {
-		// FIX
-		panic(err)
+		return nil, err
 	}
 
 	game := &Game{
@@ -79,7 +76,7 @@ func NewGame() *Game {
 		configuration.Height/2,
 	)
 
-	return game
+	return game, nil
 }
 
 func (g *Game) Update() error {

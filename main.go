@@ -14,7 +14,11 @@ func main() {
 	ebiten.SetWindowTitle(configuration.Title)
 	ebiten.SetWindowSize(configuration.Width, configuration.Height)
 
-	g := game.NewGame()
+	g, err := game.NewGame()
+	if err != nil {
+		fmt.Println("Error creating new game:", err)
+		os.Exit(1)
+	}
 
 	// Run game loop
 	if err := ebiten.RunGame(g); err != nil {
