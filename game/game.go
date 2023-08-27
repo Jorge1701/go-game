@@ -5,7 +5,7 @@ import (
 	"game/audio"
 	"game/collision"
 	"game/configuration"
-	"game/graphics"
+	"game/image"
 	"math/rand"
 	"slices"
 
@@ -21,10 +21,11 @@ var gameBoundary = &collision.Rectangle{
 }
 
 type Game struct {
-	audioPlayer *audio.AudioPlayer
-	player      *Player
-	enemies     []*Enemy
-	bullets     []*Bullet
+	imageManager *image.ImageManager
+	audioPlayer  *audio.AudioPlayer
+	player       *Player
+	enemies      []*Enemy
+	bullets      []*Bullet
 
 	stage         int
 	killedEnemies int
@@ -34,12 +35,22 @@ type Game struct {
 }
 
 func NewGame() *Game {
+	// Create image manager
+	imageManager, err := image.NewImageManager()
+	if err != nil {
+		// FIX
+		panic(err)
+	}
+
+	// Create audio player
 	audioPlayer, err := audio.NewAudioPlayer()
 	if err != nil {
+		// FIX
 		panic(err)
 	}
 
 	game := &Game{
+		imageManager:  imageManager,
 		audioPlayer:   audioPlayer,
 		enemies:       []*Enemy{},
 		bullets:       []*Bullet{},
@@ -91,16 +102,16 @@ func (g *Game) Update() error {
 func (g *Game) Draw(screen *ebiten.Image) {
 	ebitenutil.DebugPrint(screen, "Hello, World!")
 
-	graphics.AllImages["background"].Draw(screen, 0, 0)
+	g.imageManager.Draw(screen, "background", 0, 0)
 
-	graphics.Draw(g.player, screen)
+	g.player.Draw(screen)
 
 	for _, e := range g.enemies {
-		graphics.Draw(e, screen)
+		e.Draw(screen)
 	}
 
 	for _, b := range g.bullets {
-		graphics.Draw(b, screen)
+		b.Draw(screen)
 	}
 }
 
