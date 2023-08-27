@@ -10,21 +10,15 @@ import (
 	"image/color"
 	"math/rand"
 	"slices"
+	"time"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 )
 
-var gameBoundary = &engine.Rectangle{
-	Position: &engine.Point{
-		X: configuration.Width / 2,
-		Y: configuration.Height / 2,
-	},
-	Width:  configuration.Width,
-	Height: configuration.Height,
-}
-
 type Game struct {
+	terrain *Terrain
+
 	fontManager  *fonts.FontManager
 	imageManager *image.ImageManager
 	audioPlayer  *audio.AudioPlayer
@@ -37,6 +31,8 @@ type Game struct {
 	maxEnemyCount int
 
 	IsGameOver bool
+
+	lastUpdate int64
 }
 
 func NewGame() (*Game, error) {
@@ -58,6 +54,7 @@ func NewGame() (*Game, error) {
 		return nil, err
 	}
 
+	// Creating game object
 	game := &Game{
 		fontManager:   fontManager,
 		imageManager:  imageManager,
@@ -70,6 +67,8 @@ func NewGame() (*Game, error) {
 		IsGameOver:    false,
 	}
 
+	game.terrain = NewTerrain(game)
+
 	game.player = NewPlayer(
 		game,
 		configuration.Width/2,
@@ -80,6 +79,11 @@ func NewGame() (*Game, error) {
 }
 
 func (g *Game) Update() error {
+	// Calculate deltaTime time since last updata
+	currT := time.Now().UnixMilli()
+	deltaTime := currT - g.lastUpdate
+	g.lastUpdate = currT
+
 	if g.IsGameOver {
 		return nil
 	}
@@ -91,11 +95,7 @@ func (g *Game) Update() error {
 	}
 
 	for _, b := range g.bullets {
-		if engine.CheckCollision(b.drawable.Rect, gameBoundary) {
-			b.Update(g.enemies)
-		} else {
-			g.deleteBullet(b)
-		}
+		b.Update(deltaTime, g.enemies)
 	}
 
 	for len(g.enemies) < g.maxEnemyCount {
@@ -110,13 +110,16 @@ func (g *Game) Update() error {
 		len(g.bullets),
 	)
 
+	g.imageManager.XOffSet = g.player.drawable.Rect.Position.X - configuration.Width/2
+	g.imageManager.YOffSet = g.player.drawable.Rect.Position.Y - configuration.Height/2
+
 	return nil
 }
 
 func (g *Game) Draw(screen *ebiten.Image) {
 	ebitenutil.DebugPrint(screen, "Hello, World!")
 
-	g.imageManager.DrawImage(screen, "background", 0, 0)
+	g.terrain.Draw(screen)
 
 	g.imageManager.Draw(screen, g.player.drawable)
 
@@ -166,7 +169,7 @@ func (g *Game) createEnemy() {
 		y = float64(rand.Intn(configuration.Height))
 	}
 
-	e, err := NewEnemy(g, x, y)
+	e, err := NewEnemy(g, x+g.imageManager.XOffSet, y+g.imageManager.YOffSet)
 
 	if err != nil {
 		panic(fmt.Sprintf("Error generating enemy: %v", err))
