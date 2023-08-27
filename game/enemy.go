@@ -28,7 +28,7 @@ func NewEnemy(game *Game, x, y float64) (*Enemy, error) {
 			},
 			ImageAlias: "enemy",
 		},
-		speed: 0.2,
+		speed: 0.5,
 		game:  game,
 	}, nil
 }

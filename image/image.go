@@ -29,6 +29,6 @@ func (im *ImageManager) DrawImage(screen *ebiten.Image, alias string, x, y float
 
 func (im *ImageManager) Draw(screen *ebiten.Image, drawable *graphics.Drawable) {
 	options := &ebiten.DrawImageOptions{}
-	options.GeoM.Translate(drawable.Rect.Position.X, drawable.Rect.Position.Y)
+	options.GeoM.Translate(drawable.Rect.CenterX(), drawable.Rect.CenterY())
 	screen.DrawImage(allImages[drawable.ImageAlias], options)
 }

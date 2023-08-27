@@ -15,11 +15,11 @@ import (
 
 var gameBoundary = &engine.Rectangle{
 	Position: &engine.Point{
-		X: -10,
-		Y: -10,
+		X: configuration.Width / 2,
+		Y: configuration.Height / 2,
 	},
-	Width:  configuration.Width + 20,
-	Height: configuration.Height + 20,
+	Width:  configuration.Width,
+	Height: configuration.Height,
 }
 
 type Game struct {
