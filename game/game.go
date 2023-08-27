@@ -5,7 +5,9 @@ import (
 	"game/audio"
 	"game/configuration"
 	"game/engine"
+	"game/fonts"
 	"game/image"
+	"image/color"
 	"math/rand"
 	"slices"
 
@@ -23,6 +25,7 @@ var gameBoundary = &engine.Rectangle{
 }
 
 type Game struct {
+	fontManager  *fonts.FontManager
 	imageManager *image.ImageManager
 	audioPlayer  *audio.AudioPlayer
 	player       *Player
@@ -37,6 +40,13 @@ type Game struct {
 }
 
 func NewGame() *Game {
+	// Create font manager
+	fontManager, err := fonts.NewFontManager()
+	if err != nil {
+		// FIX
+		panic(err)
+	}
+
 	// Create image manager
 	imageManager, err := image.NewImageManager()
 	if err != nil {
@@ -52,6 +62,7 @@ func NewGame() *Game {
 	}
 
 	game := &Game{
+		fontManager:   fontManager,
 		imageManager:  imageManager,
 		audioPlayer:   audioPlayer,
 		enemies:       []*Enemy{},
@@ -72,6 +83,10 @@ func NewGame() *Game {
 }
 
 func (g *Game) Update() error {
+	if g.IsGameOver {
+		return nil
+	}
+
 	g.player.Update()
 
 	for _, e := range g.enemies {
@@ -114,6 +129,15 @@ func (g *Game) Draw(screen *ebiten.Image) {
 
 	for _, b := range g.bullets {
 		g.imageManager.Draw(screen, b.drawable)
+	}
+
+	if g.IsGameOver {
+		g.fontManager.ShowText(screen, "Game Over!",
+			"principal",
+			configuration.Width/2,
+			configuration.Height/2,
+			color.Black,
+		)
 	}
 }
 
