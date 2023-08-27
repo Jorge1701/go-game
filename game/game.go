@@ -3,8 +3,8 @@ package game
 import (
 	"fmt"
 	"game/audio"
-	"game/collision"
 	"game/configuration"
+	"game/engine"
 	"game/image"
 	"math/rand"
 	"slices"
@@ -13,11 +13,13 @@ import (
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 )
 
-var gameBoundary = &collision.Rectangle{
-	X:      -10,
-	Y:      -10,
-	Width:  configuration.Width + 10,
-	Height: configuration.Height + 10,
+var gameBoundary = &engine.Rectangle{
+	Position: &engine.Point{
+		X: configuration.Width / 2,
+		Y: configuration.Height / 2,
+	},
+	Width:  configuration.Width,
+	Height: configuration.Height,
 }
 
 type Game struct {
@@ -77,7 +79,7 @@ func (g *Game) Update() error {
 	}
 
 	for _, b := range g.bullets {
-		if collision.CheckCollision(b, gameBoundary) {
+		if engine.CheckCollision(b.drawable.Rect, gameBoundary) {
 			b.Update(g.enemies)
 		} else {
 			g.deleteBullet(b)
@@ -102,16 +104,16 @@ func (g *Game) Update() error {
 func (g *Game) Draw(screen *ebiten.Image) {
 	ebitenutil.DebugPrint(screen, "Hello, World!")
 
-	g.imageManager.Draw(screen, "background", 0, 0)
+	g.imageManager.DrawImage(screen, "background", 0, 0)
 
-	g.player.Draw(screen)
+	g.imageManager.Draw(screen, g.player.drawable)
 
 	for _, e := range g.enemies {
-		e.Draw(screen)
+		g.imageManager.Draw(screen, e.drawable)
 	}
 
 	for _, b := range g.bullets {
-		b.Draw(screen)
+		g.imageManager.Draw(screen, b.drawable)
 	}
 }
 
@@ -119,8 +121,8 @@ func (g *Game) Layout(outsideWidth, outsideHeight int) (screenWidth, screenHeigh
 	return configuration.Width, configuration.Height
 }
 
-func (g *Game) createBullet(x, y, dir float64) {
-	g.bullets = append(g.bullets, NewBullet(g, x, y, dir))
+func (g *Game) createBullet(position *engine.Point, dir float64) {
+	g.bullets = append(g.bullets, NewBullet(g, position.X, position.Y, dir))
 }
 
 func (g *Game) createEnemy() {
