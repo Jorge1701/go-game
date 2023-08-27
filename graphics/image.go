@@ -21,16 +21,16 @@ func (i *Image) Draw(screen *ebiten.Image, x, y float64) {
 }
 
 func LoadImages() error {
-	if err := loadImage("background", "resources/background.png"); err != nil {
+	if err := loadImage("background", "resources/images/background.png"); err != nil {
 		return err
 	}
-	if err := loadImage("player", "resources/player.png"); err != nil {
+	if err := loadImage("player", "resources/images/player.png"); err != nil {
 		return err
 	}
-	if err := loadImage("bullet", "resources/bullet.png"); err != nil {
+	if err := loadImage("bullet", "resources/images/bullet.png"); err != nil {
 		return err
 	}
-	if err := loadImage("enemy", "resources/enemy_1.png"); err != nil {
+	if err := loadImage("enemy", "resources/images/enemy_1.png"); err != nil {
 		return err
 	}
 
