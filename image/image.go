@@ -1,6 +1,10 @@
 package image
 
-import "github.com/hajimehoshi/ebiten/v2"
+import (
+	"game/graphics"
+
+	"github.com/hajimehoshi/ebiten/v2"
+)
 
 var allImages = map[string]*ebiten.Image{}
 
@@ -17,8 +21,14 @@ func NewImageManager() (*ImageManager, error) {
 	return &ImageManager{}, nil
 }
 
-func (im *ImageManager) Draw(screen *ebiten.Image, alias string, x, y float64) {
+func (im *ImageManager) DrawImage(screen *ebiten.Image, alias string, x, y float64) {
 	options := &ebiten.DrawImageOptions{}
 	options.GeoM.Translate(x, y)
 	screen.DrawImage(allImages[alias], options)
+}
+
+func (im *ImageManager) Draw(screen *ebiten.Image, drawable *graphics.Drawable) {
+	options := &ebiten.DrawImageOptions{}
+	options.GeoM.Translate(drawable.Rect.Position.X, drawable.Rect.Position.Y)
+	screen.DrawImage(allImages[drawable.ImageAlias], options)
 }

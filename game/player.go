@@ -1,6 +1,8 @@
 package game
 
 import (
+	"game/engine"
+	"game/graphics"
 	"game/utils"
 	"math"
 	"time"
@@ -12,10 +14,7 @@ import (
 var lastFire = int64(0)
 
 type Player struct {
-	x      float64
-	y      float64
-	width  int
-	height int
+	drawable *graphics.Drawable
 
 	speed    float64
 	fireRate int64
@@ -27,10 +26,17 @@ type Player struct {
 
 func NewPlayer(game *Game, x, y float64) *Player {
 	return &Player{
-		x:        x,
-		y:        y,
-		width:    19,
-		height:   40,
+		drawable: &graphics.Drawable{
+			Rect: &engine.Rectangle{
+				Position: &engine.Point{
+					X: x,
+					Y: y,
+				},
+				Width:  19,
+				Height: 40,
+			},
+			ImageAlias: "player",
+		},
 		speed:    1,
 		fireRate: 500,
 		health:   5,
@@ -46,8 +52,14 @@ func (p *Player) Update() {
 
 		if currT-lastFire > p.fireRate {
 			lastFire = currT
-			dirToMouse := utils.Direction(&utils.Point{X: p.x, Y: p.y}, &utils.Point{X: float64(mouseX), Y: float64(mouseY)})
-			p.game.createBullet(p.x, p.y, dirToMouse)
+			dirToMouse := utils.Direction(
+				p.drawable.Rect.Position,
+				&engine.Point{X: float64(mouseX), Y: float64(mouseY)},
+			)
+			p.game.createBullet(
+				p.drawable.Rect.Position,
+				dirToMouse,
+			)
 			p.game.audioPlayer.PlayFromBytes("shot")
 		}
 	}
@@ -55,7 +67,7 @@ func (p *Player) Update() {
 	// Checkout keyboard input
 	keys := inpututil.AppendPressedKeys([]ebiten.Key{})
 
-	movePoint := &utils.Point{}
+	movePoint := &engine.Point{}
 
 	for _, key := range keys {
 		if key == ebiten.KeyA {
@@ -75,13 +87,9 @@ func (p *Player) Update() {
 	if movePoint.X != 0 || movePoint.Y != 0 {
 		moveDirection := utils.DirectionTo(movePoint)
 
-		p.x += math.Cos(moveDirection) * p.speed
-		p.y += math.Sin(moveDirection) * p.speed
+		p.drawable.Rect.Position.X += math.Cos(moveDirection) * p.speed
+		p.drawable.Rect.Position.Y += math.Sin(moveDirection) * p.speed
 	}
-}
-
-func (p *Player) Draw(screen *ebiten.Image) {
-	p.game.imageManager.Draw(screen, "player", p.GetX(), p.GetY())
 }
 
 func (p *Player) GetHit() {
@@ -91,20 +99,4 @@ func (p *Player) GetHit() {
 	if p.health <= 0 {
 		p.game.GameOver()
 	}
-}
-
-func (p *Player) GetX() float64 {
-	return p.x - float64(p.GetWidth()/2)
-}
-
-func (p *Player) GetY() float64 {
-	return p.y - float64(p.GetHeight()/2)
-}
-
-func (p *Player) GetWidth() int {
-	return p.width
-}
-
-func (p *Player) GetHeight() int {
-	return p.height
 }
