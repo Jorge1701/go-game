@@ -8,7 +8,6 @@ import (
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
-	"github.com/veandco/go-sdl2/sdl"
 )
 
 var lastFire = int64(0)
@@ -40,10 +39,11 @@ func NewPlayer(game *Game, x, y float64) *Player {
 }
 
 func (p *Player) Update() {
-	mouseX, mouseY, mouseState := sdl.GetMouseState()
-
-	if mouseState == sdl.ButtonLMask {
+	// Check mouse input
+	if ebiten.IsMouseButtonPressed(ebiten.MouseButton0) {
+		mouseX, mouseY := ebiten.CursorPosition()
 		currT := time.Now().UnixMilli()
+
 		if currT-lastFire > p.fireRate {
 			lastFire = currT
 			dirToMouse := utils.Direction(&utils.Point{X: p.x, Y: p.y}, &utils.Point{X: float64(mouseX), Y: float64(mouseY)})
@@ -52,6 +52,7 @@ func (p *Player) Update() {
 		}
 	}
 
+	// Checkout keyboard input
 	keys := inpututil.AppendPressedKeys([]ebiten.Key{})
 
 	movePoint := &utils.Point{}
