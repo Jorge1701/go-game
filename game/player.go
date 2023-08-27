@@ -1,7 +1,6 @@
 package game
 
 import (
-	"game/graphics"
 	"game/utils"
 	"math"
 	"time"
@@ -13,15 +12,15 @@ import (
 var lastFire = int64(0)
 
 type Player struct {
-	x float64
-	y float64
+	x      float64
+	y      float64
+	width  int
+	height int
 
 	speed    float64
 	fireRate int64
 
 	health int
-
-	image *graphics.Image
 
 	game *Game
 }
@@ -30,10 +29,11 @@ func NewPlayer(game *Game, x, y float64) *Player {
 	return &Player{
 		x:        x,
 		y:        y,
+		width:    19,
+		height:   40,
 		speed:    1,
 		fireRate: 500,
 		health:   5,
-		image:    graphics.AllImages["player"],
 		game:     game,
 	}
 }
@@ -80,6 +80,10 @@ func (p *Player) Update() {
 	}
 }
 
+func (p *Player) Draw(screen *ebiten.Image) {
+	p.game.imageManager.Draw(screen, "player", p.GetX(), p.GetY())
+}
+
 func (p *Player) GetHit() {
 	p.health--
 	p.game.audioPlayer.PlayFromBytes("player_hit")
@@ -97,14 +101,10 @@ func (p *Player) GetY() float64 {
 	return p.y - float64(p.GetHeight()/2)
 }
 
-func (p *Player) GetImage() *graphics.Image {
-	return p.image
-}
-
 func (p *Player) GetWidth() int {
-	return p.image.Image.Bounds().Dx()
+	return p.width
 }
 
 func (p *Player) GetHeight() int {
-	return p.image.Image.Bounds().Dy()
+	return p.height
 }

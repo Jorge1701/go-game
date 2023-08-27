@@ -4,19 +4,12 @@ import (
 	"fmt"
 	"game/configuration"
 	"game/game"
-	"game/graphics"
 	"os"
 
 	"github.com/hajimehoshi/ebiten/v2"
 )
 
 func main() {
-	// Load all images
-	if err := graphics.LoadImages(); err != nil {
-		fmt.Println("Error loading images:", err)
-		os.Exit(1)
-	}
-
 	// Create window
 	ebiten.SetWindowTitle(configuration.Title)
 	ebiten.SetWindowSize(configuration.Width, configuration.Height)
