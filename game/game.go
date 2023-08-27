@@ -5,12 +5,15 @@ import (
 	"game/audio"
 	"game/configuration"
 	"game/engine"
+	"game/fonts"
 	"game/image"
+	"image/color"
 	"math/rand"
 	"slices"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
+	"github.com/hajimehoshi/ebiten/v2/text"
 )
 
 var gameBoundary = &engine.Rectangle{
@@ -37,6 +40,8 @@ type Game struct {
 }
 
 func NewGame() *Game {
+	fonts.LoadFonts()
+
 	// Create image manager
 	imageManager, err := image.NewImageManager()
 	if err != nil {
@@ -72,6 +77,10 @@ func NewGame() *Game {
 }
 
 func (g *Game) Update() error {
+	if g.IsGameOver {
+		return nil
+	}
+
 	g.player.Update()
 
 	for _, e := range g.enemies {
@@ -114,6 +123,14 @@ func (g *Game) Draw(screen *ebiten.Image) {
 
 	for _, b := range g.bullets {
 		g.imageManager.Draw(screen, b.drawable)
+	}
+
+	if g.IsGameOver {
+		text.Draw(screen, "Game Over!", fonts.Font,
+			configuration.Width/2,
+			configuration.Height/2,
+			color.Black,
+		)
 	}
 }
 
