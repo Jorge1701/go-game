@@ -55,13 +55,16 @@ const (
 )
 
 func loadAllAudios() error {
-	if err := loadAudio("enemy_dead", "resources/enemy_dead.mp3", MP3); err != nil {
+	if err := loadAudio("enemy_dead", "resources/audio/enemy_dead.wav", WAV); err != nil {
 		return err
 	}
-	if err := loadAudio("player_hit", "resources/player_hit.wav", WAV); err != nil {
+	if err := loadAudio("player_hit", "resources/audio/player_hit.wav", WAV); err != nil {
 		return err
 	}
-	if err := loadAudio("game_over", "resources/game_over.wav", WAV); err != nil {
+	if err := loadAudio("game_over", "resources/audio/game_over.wav", WAV); err != nil {
+		return err
+	}
+	if err := loadAudio("shot", "resources/audio/shot.wav", WAV); err != nil {
 		return err
 	}
 

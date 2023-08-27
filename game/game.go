@@ -172,5 +172,5 @@ func (g *Game) deleteBullet(bulletToDelete *Bullet) {
 
 func (g *Game) GameOver() {
 	g.IsGameOver = true
-	// audio.AllAudios["game_over"].Play()
+	g.audioPlayer.PlayFromBytes("game_over")
 }

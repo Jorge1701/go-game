@@ -48,7 +48,7 @@ func (p *Player) Update() {
 			lastFire = currT
 			dirToMouse := utils.Direction(&utils.Point{X: p.x, Y: p.y}, &utils.Point{X: float64(mouseX), Y: float64(mouseY)})
 			p.game.createBullet(p.x, p.y, dirToMouse)
-			// audio.AllAudios["shot"].Play()
+			p.game.audioPlayer.PlayFromBytes("shot")
 		}
 	}
 
@@ -83,7 +83,6 @@ func (p *Player) Update() {
 func (p *Player) GetHit() {
 	p.health--
 	p.game.audioPlayer.PlayFromBytes("player_hit")
-	// audio.AllAudios["player_hit"].Play()
 
 	if p.health <= 0 {
 		p.game.GameOver()
